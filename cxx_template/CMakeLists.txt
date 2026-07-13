@@ -9,6 +9,8 @@ add_executable(${PROJECT_NAME}
     main.cpp
     src/log.cpp
     include/log.hpp
+    include/typedefs.hpp
+    include/common.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
