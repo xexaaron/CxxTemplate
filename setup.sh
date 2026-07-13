@@ -162,9 +162,11 @@ mkdir -p ${PROJECT_NAME}/.vscode
 mkdir -p ${PROJECT_NAME}/${DIR}/include
 mkdir -p ${PROJECT_NAME}/${DIR}/src
 mkdir -p ${PROJECT_NAME}/vendor
+mkdir -p ${PROJECT_NAME}/.git
 
 cp -r CxxTemplate/.vscode/* ${PROJECT_NAME}/.vscode
 cp -r CxxTemplate/${DIR}/* ${PROJECT_NAME}/${DIR}
+cp -r CxxTemplate/.git/* ${PROJECT_NAME}/.git 
 cp CxxTemplate/.gitignore ${PROJECT_NAME}/.gitignore
 cp CxxTemplate/CMakeLists.txt ${PROJECT_NAME}/CMakeLists.txt
 
