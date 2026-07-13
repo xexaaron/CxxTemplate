@@ -43,6 +43,8 @@ if [[ "$PROJECT_NAME" != "CxxTemplate" ]]; then
     sed -i \
         "s/project(CxxTemplate LANGUAGES CXX)/project(${PROJECT_NAME} LANGUAGES CXX)/" \
         CMakeLists.txt
+  
+    
 fi
 
 # -----------------------------------------------------------------------------
@@ -104,6 +106,13 @@ if command -v gh >/dev/null 2>&1; then
     if [[ "$prompt" == "y" || "$prompt" == "yes" ]]; then
         gh repo create "$PROJECT_NAME" --source=. --push
     fi
+fi
+
+
+if [[ "$PROJECT_NAME" != "CxxTemplate" ]]; then
+    cd ..
+    mv CxxTemplate "$PROJECT_NAME"
+    cd "$PROJECT_NAME"
 fi
 
 rm "$0"
