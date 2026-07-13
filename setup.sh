@@ -2,38 +2,66 @@
 
 set -e
 
+
+CYAN="\e[36m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+RESET="\e[0m"
+GREY="\e[90m"
+
 PROJECT_NAME="CxxTemplate"
 NAMESPACE="aby"
 DIR="cxx_template"
 
+
+
 usage() {
-    echo "usage: $0 [-ns|--namespace <namespace>] [-d|--dir <project directory name>] [-pn|--project-name <name>] [-h|--help]"
+    printf "${GREEN}usage${RESET}: ${YELLOW}%s${RESET} [${GREY}-ns${RESET}|${GREY}--namespace${RESET} <namespace>] [${GREY}-d${RESET}|${GREY}--dir${RESET} <project directory name>] [${GREY}-pn${RESET}|${GREY}--project-name${RESET} <name>] [${GREY}-h${RESET}|${GREY}--help${RESET}]\n" "$0"
     exit 1
 }
 
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        -ns|--namespace)
-            NAMESPACE="$2"
-            shift 2
-            ;;
-        -d|--dir)
-            DIR="$2"
-            shift 2
-            ;;
-        -pn|--project-name)
-            PROJECT_NAME="$2"
-            shift 2
-            ;;
-        -h|--help)
-            usage
-            ;;
-        *)
-            echo "Unknown option: $1"
-            usage
-            ;;
-    esac
-done
+if [[ $# -eq 0 ]]; then
+    echo -e "${CYAN}Configure C++ Template${RESET}"
+
+    read -rp "$(echo -e "${GREY}Project name ${RESET}[${GREEN}$PROJECT_NAME${RESET}]: ${YELLOW}")" input
+    echo -ne "$RESET"
+    [[ -n "$input" ]] && PROJECT_NAME="$input"
+
+    read -rp "$(echo -e "${GREY}Project directory and name of executable ${RESET}[${GREEN}$DIR${RESET}]: ${YELLOW}")" input
+    echo -ne "$RESET"
+    [[ -n "$input" ]] && DIR="$input"
+
+    read -rp "$(echo -e "${GREY}Namespace for preincluded files ${RESET}[${GREEN}$NAMESPACE${RESET}]: ${YELLOW}")" input
+    echo -ne "$RESET"
+    [[ -n "$input" ]] && NAMESPACE="$input"
+else
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -ns|--namespace)
+                NAMESPACE="$2"
+                shift 2
+                ;;
+            -d|--dir)
+                DIR="$2"
+                shift 2
+                ;;
+            -pn|--project-name)
+                PROJECT_NAME="$2"
+                shift 2
+                ;;
+            -h|--help)
+                usage
+                ;;
+            *)
+                echo "Unknown option: $1"
+                usage
+                ;;
+        esac
+    done
+fi
+
+exec 3>&1 4>&2
+exec >/dev/null 2>&1
 
 # -----------------------------------------------------------------------------
 # Project name
@@ -89,7 +117,7 @@ if [[ "$NAMESPACE" != "aby" ]]; then
     done
 fi
 
-echo "Template configured successfully."
+printf "${GREEN}Template configured successfully.${RESET}\n" >&3
 
 rm -rf .git
 
@@ -100,22 +128,30 @@ if command -v git >/dev/null 2>&1; then
 fi
 
 if command -v gh >/dev/null 2>&1; then
-    read -rp "Would you like to create a new GitHub repository? (y/n): " prompt
+    printf "${GREY}Create new github.com repository?${RESET} [${GREEN}n${RESET}] (y/n): ${YELLOW}" >&3
+    read -r prompt
+    printf "${RESET}" >&3
     prompt=${prompt,,}
+    prompt=${prompt:-n}
 
     if [[ "$prompt" == "y" || "$prompt" == "yes" ]]; then
-        gh repo create "$PROJECT_NAME" --source=. --push
+        printf "${GREY}Choose repo visibility${RESET} [${GREEN}private${RESET}] (private/public): ${YELLOW}" >&3
+        read -r visibility
+        printf "${RESET}" >&3
+        visibility=${visibility,,}
+        visibility=${visibility:-private}
+
+        gh repo create "$PROJECT_NAME" \
+            --source=. \
+            --push \
+            --"$visibility"
+
+         USERNAME=$(gh api user --jq .login)
+            printf "${GREEN}Created GitHub repository:${RESET} https://github.com/%s/%s.git\n" \
+                "$USERNAME" "$PROJECT_NAME" >&3
     fi
 fi
 
-
-if [[ "$PROJECT_NAME" != "CxxTemplate" ]]; then
-    cd ..
-    mv CxxTemplate "$PROJECT_NAME"
-    cd "$PROJECT_NAME"
-fi
-
 rm "$0"
-
 
 
