@@ -88,3 +88,25 @@ if [[ "$NAMESPACE" != "aby" ]]; then
 fi
 
 echo "Template configured successfully."
+
+rm -rf .git
+
+if command -v git >/dev/null 2>&1; then
+    git init
+    git add .
+    git commit -m "Initial commit"
+fi
+
+if command -v gh >/dev/null 2>&1; then
+    read -rp "Would you like to create a new GitHub repository? (y/n): " prompt
+    prompt=${prompt,,}
+
+    if [[ "$prompt" == "y" || "$prompt" == "yes" ]]; then
+        gh repo create "$PROJECT_NAME" --source=. --push
+    fi
+fi
+
+rm "$0"
+
+
+
