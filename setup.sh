@@ -61,6 +61,10 @@ if [[ "$DIR" != "cxx_template" ]]; then
             "s|\${workspaceFolder}/cxx_template/include|\${workspaceFolder}/${DIR}/include|g" \
             ".vscode/c_cpp_properties.json"
     fi
+
+    sed -i \
+        "s|add_subdirectory(\${CMAKE_CURRENT_SOURCE_DIR}/cxx_template)|add_subdirectory(\${CMAKE_CURRENT_SOURCE_DIR}/${DIR})|" \
+        CMakeLists.txt
 fi
 
 # -----------------------------------------------------------------------------
