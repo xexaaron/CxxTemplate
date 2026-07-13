@@ -8,6 +8,7 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 RESET="\e[0m"
 GREY="\e[90m"
+DARK_BLUE="\e[38;5;25m"
 
 PROJECT_NAME="CxxTemplate"
 NAMESPACE="aby"
@@ -147,11 +148,40 @@ if command -v gh >/dev/null 2>&1; then
             --"$visibility"
 
          USERNAME=$(gh api user --jq .login)
-            printf "${GREEN}Created GitHub repository:${RESET} https://github.com/%s/%s.git\n" \
+            printf "${GREEN}Created GitHub repository:${RESET} ${DARK_BLUE}https://github.com/%s/%s.git${RESET}\n" \
                 "$USERNAME" "$PROJECT_NAME" >&3
     fi
 fi
 
+cat > temp_script.sh <<EOF
+#!/usr/bin/env bash
+
+sleep 1
+
+mkdir -p ${PROJECT_NAME}/.vscode
+mkdir -p ${PROJECT_NAME}/${DIR}/include
+mkdir -p ${PROJECT_NAME}/${DIR}/src
+
+cp -r CxxTemplate/.vscode/* ${PROJECT_NAME}/.vscode
+cp -r CxxTemplate/${DIR}/* ${PROJECT_NAME}/${DIR}
+cp CxxTemplate/.gitignore ${PROJECT_NAME}/.gitignore
+cp CxxTemplate/CMakeLists.txt ${PROJECT_NAME}/CMakeLists.txt
+
+rm -rf CxxTemplate
+
+rm "\$0"
+EOF
+
+chmod +x temp_script.sh
+
+mv temp_script.sh ../temp_script.sh
+
+(
+    cd ..
+    ./temp_script.sh
+) &
+
+cd .. 
 rm "$0"
-
-
+rm -rf CxxTemplate
+cd $PROJECT_NAME
