@@ -161,6 +161,7 @@ sleep 1
 mkdir -p ${PROJECT_NAME}/.vscode
 mkdir -p ${PROJECT_NAME}/${DIR}/include
 mkdir -p ${PROJECT_NAME}/${DIR}/src
+mkdir -p ${PROJECT_NAME}/vendor
 
 cp -r CxxTemplate/.vscode/* ${PROJECT_NAME}/.vscode
 cp -r CxxTemplate/${DIR}/* ${PROJECT_NAME}/${DIR}
